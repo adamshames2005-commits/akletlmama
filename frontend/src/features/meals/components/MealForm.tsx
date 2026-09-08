@@ -9,9 +9,10 @@ type MealFormProps = {
 const MealForm = ({ onMealCreated }: MealFormProps) => {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [individualPrice, setIndividualPrice] = useState<number | undefined>(undefined);
-    const [smallPotPrice, setSmallPotPrice] = useState<number | undefined>(undefined);
-    const [largePotPrice, setLargePotPrice] = useState<number | undefined>(undefined);
+    const [individualPrice, setIndividualPrice] = useState<string>("");
+    const [imageUrl, setImageUrl] = useState<string>("");
+    const [smallPotPrice, setSmallPotPrice] = useState<string>("");
+    const [largePotPrice, setLargePotPrice] = useState<string>("");
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
@@ -21,16 +22,18 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
         const newMeal = await createMeal({
             name,
             description,
+            imageUrl: imageUrl || undefined,
             prices: {
-                ...(individualPrice !== undefined &&
+                ...(individualPrice !== "" &&
                      { individual: Number(individualPrice)
 
                       }),
-                ...(smallPotPrice !== undefined &&
+                      //... used like if true individual=number(individualPrice) else nothing
+                ...(smallPotPrice !== "" &&
                      { smallPot: Number(smallPotPrice)
 
                       }),
-                ...(largePotPrice !== undefined &&
+                ...(largePotPrice !== "" &&
                      { largePot: Number(largePotPrice)
 
                       }),
@@ -41,9 +44,10 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
 
         setName("");
         setDescription("");
-        setIndividualPrice(undefined);
-        setSmallPotPrice(undefined);
-        setLargePotPrice(undefined);
+        setIndividualPrice("");
+        setSmallPotPrice("");
+        setLargePotPrice("");
+        setImageUrl("");
     };
 
     return (
@@ -67,12 +71,24 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     />
                 </div>
                 <div>
+                    <label htmlFor="image-url">Image URL:</label>
+                    <input
+                    id="image-url"
+                    value={imageUrl}
+                    type="text"
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="https://..."
+                    />
+                </div>
+                <div>
                     <label htmlFor="individual-price">Individual Price:</label>
                     <input
                     id="individual-price"
                     type="number"
                     value={individualPrice}
-                    onChange={(e) => setIndividualPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) => setIndividualPrice(
+                        e.target.value )}
+                    
                     />
                 </div>
                 <div>
@@ -81,7 +97,8 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     id="small-pot-price"
                     type="number"
                     value={smallPotPrice}
-                    onChange={(e) => setSmallPotPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) => setSmallPotPrice(
+                        e.target.value )}
                     />
                 </div>
                 <div>
@@ -90,7 +107,8 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     id="large-pot-price"
                     type="number"
                     value={largePotPrice}
-                    onChange={(e) => setLargePotPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) => setLargePotPrice(
+                        e.target.value)}
                     />
                 </div>
                 <button type="submit">Create Meal</button>

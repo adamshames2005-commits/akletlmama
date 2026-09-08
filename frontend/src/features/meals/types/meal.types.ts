@@ -22,3 +22,5 @@ export type CreateMealInput = {
     prices: MealPrices;
     isActive?: boolean;
 };
+
+export type UpdateMealInput = Partial<CreateMealInput>;
