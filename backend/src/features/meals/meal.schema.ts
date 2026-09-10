@@ -19,6 +19,7 @@ export const createMealSchema = z.object({
     description : z.string().min(2).trim(),
     imageUrl : z.url().optional(),
     prices : pricesSchema,
+    isDaily : z.boolean().optional(),
     isActive : z.boolean().optional(),
 });
 

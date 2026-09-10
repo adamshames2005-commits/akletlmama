@@ -1,7 +1,12 @@
-import AdminMealsPage from "./features/meals/pages/AdminMealsPage";
+import CustomerLayout from "./layouts/CustomerLayout";
+import HomePage from "./features/home/pages/HomePage";
 
 function App() {
-  return <AdminMealsPage />;
+  return (
+    <CustomerLayout>
+      <HomePage />
+    </CustomerLayout>
+  );
 }
 
 export default App;

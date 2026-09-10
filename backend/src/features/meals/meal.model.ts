@@ -32,6 +32,11 @@ const mealSchema = new Schema({
         },
     },
 
+    isDaily:{
+        type:Boolean,
+        default:false,
+    },
+
     isActive:{
         type:Boolean,
         default:true,

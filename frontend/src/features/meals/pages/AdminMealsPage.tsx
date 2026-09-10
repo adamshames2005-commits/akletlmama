@@ -2,6 +2,8 @@ import {useEffect, useState} from "react";
 import {getMeals,updateMeal,deleteMeal} from "../api/mealApi";
 import type {Meal} from "../types/meal.types";
 import MealForm from "../components/MealForm";
+import "./AdminMealsPage.css";
+
 
 const AdminMealsPage = () => {
     
@@ -100,12 +102,23 @@ const AdminMealsPage = () => {
 };
 
     return (
-        <div>
-            <h1>Meals</h1>
-
+        <div className="admin-page">
+          <div className="admin-content">
+            <div className="page-header">
+              <div>
+                <h1>Meals Management</h1>
+                <p>Add, edit, and manage your meals</p>
+              </div>
+            </div>
+          <div className="admin-card">
             <MealForm onMealCreated={handleMealCreated} />
-            
-            <table>
+          </div>
+
+          <div className="admin-card">
+            <div className="meals-header">
+              <h2>Meals</h2>
+            </div>
+            <table className="meals-table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -121,12 +134,40 @@ const AdminMealsPage = () => {
                 <tbody>
                     {meals.map((meal) => {
                       const isEditing = editingMealId === meal._id;
-                    
+                    //start of the function lal image wma aamlneha mtl tahet krmel
+                    // there is a type script error le howe 2 ? fa hatayna 2 if statements 
+                      let imageContent;
+
+                      if (isEditing) {
+                        imageContent = (
+                          <input
+                            className="edit-input"
+                            value={editImageUrl}
+                            onChange={(event) =>
+                              setEditImageUrl(event.target.value)
+                            }
+                          />
+                        );
+                      } else if (meal.imageUrl) {
+                        imageContent = (
+                          <img
+                            className="meal-image"
+                            src={meal.imageUrl}
+                            alt={meal.name}
+                            width="70"
+                            height="50"
+                          />
+                        );
+                      } else {
+                        imageContent = "No image";
+                      }
+                      //end of the function
                       return (
                         <tr key={meal._id}>
                           <td>
                             {isEditing ? (
                               <input
+                                className="edit-input"
                                 value={editName}
                                 onChange={(event) =>
                                   setEditName(event.target.value)
@@ -140,6 +181,7 @@ const AdminMealsPage = () => {
                           <td>
                             {isEditing ? (
                               <input
+                                className="edit-input"
                                 value={editDescription}
                                 onChange={(event) =>
                                   setEditDescription(event.target.value)
@@ -150,28 +192,13 @@ const AdminMealsPage = () => {
                             )}
                           </td>
                         <td>
-                          {isEditing ? (
-                            <input
-                              value={editImageUrl}
-                              onChange={(event) =>
-                                setEditImageUrl(event.target.value)
-                              }
-                            />
-                          ) : meal.imageUrl ? (
-                              <img 
-                              src={meal.imageUrl} 
-                              alt={meal.name}
-                              width="70" 
-                              height="50" 
-                              />
-                            ) : (
-                              "NO IMAGE"
-                            )
-                          }
+                            {imageContent} 
+                            
                         </td>
                           <td>
                             {isEditing ? (
                               <input
+                                className="edit-input"
                                 type="number"
                                 value={editIndividualPrice}
                                 onChange={(event) =>
@@ -186,6 +213,7 @@ const AdminMealsPage = () => {
                           <td>
                             {isEditing ? (
                               <input
+                                className="edit-input"
                                 type="number"
                                 value={editSmallPotPrice}
                                 onChange={(event) =>
@@ -200,6 +228,7 @@ const AdminMealsPage = () => {
                           <td>
                             {isEditing ? (
                               <input
+                                className="edit-input"
                                 type="number"
                                 value={editLargePotPrice}
                                 onChange={(event) =>
@@ -217,21 +246,28 @@ const AdminMealsPage = () => {
                             {isEditing ? (
                               <>
                                 <button
+                                  className="btn btn-save"
                                   onClick={() => handleSaveEdit(meal._id)}
                                 >
                                   Save
                                 </button>
                             
-                                <button onClick={handleCancelEdit}>
+                                <button 
+                                className="btn btn-cancel"
+                                onClick={handleCancelEdit}>
                                   Cancel
                                 </button>
                               </>
                             ) : (
                                 <>
-                              <button onClick={() => handleEdit(meal)}>
+                              <button
+                                className="btn btn-edit"
+                                onClick={() => handleEdit(meal)}>
                                 Edit
                               </button>
-                              <button onClick={() => handleDelete(meal._id)}>
+                              <button 
+                                className="btn btn-delete"
+                                onClick={() => handleDelete(meal._id)}>
                                 Delete
                               </button>
                               </>
@@ -243,7 +279,9 @@ const AdminMealsPage = () => {
 
                 </tbody>
             </table>
+          </div>
         </div>
+      </div>
     );
 };
 

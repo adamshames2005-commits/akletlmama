@@ -10,6 +10,7 @@ export type Meal = {
     description: string;
     imageUrl?: string;
     prices: MealPrices;
+    isDaily: boolean;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
@@ -20,6 +21,7 @@ export type CreateMealInput = {
     description: string;
     imageUrl?: string;
     prices: MealPrices;
+    isDaily?: boolean;
     isActive?: boolean;
 };
 

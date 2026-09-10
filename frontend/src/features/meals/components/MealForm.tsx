@@ -13,6 +13,7 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
     const [imageUrl, setImageUrl] = useState<string>("");
     const [smallPotPrice, setSmallPotPrice] = useState<string>("");
     const [largePotPrice, setLargePotPrice] = useState<string>("");
+    const [isDaily, setIsDaily] = useState<boolean>(false);
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
@@ -38,6 +39,7 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
 
                       }),
             },
+            isDaily,
         });
 
         onMealCreated(newMeal);
@@ -48,13 +50,16 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
         setSmallPotPrice("");
         setLargePotPrice("");
         setImageUrl("");
+        setIsDaily(false);
     };
 
     return (
         <div>
             <h2>Create New Meal</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
+            <form
+             className="meal-form"
+             onSubmit={handleSubmit}>
+                <div className="form-group">
                     <label htmlFor="meal-name">Name:</label>
                     <input
                     id="meal-name"
@@ -62,7 +67,7 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     onChange={(e) => setName(e.target.value)}
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label htmlFor="meal-description">Description:</label>
                     <input
                     id="meal-description"
@@ -70,7 +75,7 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     onChange={(e) => setDescription(e.target.value)}
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label htmlFor="image-url">Image URL:</label>
                     <input
                     id="image-url"
@@ -80,7 +85,17 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     placeholder="https://..."
                     />
                 </div>
-                <div>
+                <div className="form-group">
+                    <label htmlFor="meal-daily">
+                        <input
+                        id="meal-daily"
+                        type="checkbox"
+                        checked={isDaily}
+                        onChange={(e) => setIsDaily(e.target.checked)}
+                        /> <span>Include in today's menu</span>
+                    </label>
+                </div>
+                <div className="form-group">
                     <label htmlFor="individual-price">Individual Price:</label>
                     <input
                     id="individual-price"
@@ -91,7 +106,7 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label htmlFor="small-pot-price">Small Pot Price:</label>
                     <input
                     id="small-pot-price"
@@ -101,7 +116,7 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                         e.target.value )}
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label htmlFor="large-pot-price">Large Pot Price:</label>
                     <input
                     id="large-pot-price"
@@ -111,7 +126,14 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                         e.target.value)}
                     />
                 </div>
-                <button type="submit">Create Meal</button>
+                <div className ="form-actions">
+                <button 
+                className="btn btn-primary"
+                type="submit"
+                >
+                    Create Meal
+                </button>
+                </div>
             </form>
         </div>
     );
