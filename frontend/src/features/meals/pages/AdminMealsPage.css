@@ -112,6 +112,17 @@
   color: white;
 }
 
+.btn-daily {
+  background: #edf1e8;
+  color: #315c42;
+}
+
+.btn-daily-active {
+  background: #d7ead5;
+  color: #28613a;
+  font-weight: 700;
+}
+
 .btn-save {
   background: #198754;
   color: white;

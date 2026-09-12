@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mealRouter from "./features/meals/meal.router.js";
+import authRouter from "./features/auth/auth.router.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.get("/",(req,res)=>{
 })
 
 app.use("/api/meals", mealRouter);
+app.use("/api/auth", authRouter);
 
 
 

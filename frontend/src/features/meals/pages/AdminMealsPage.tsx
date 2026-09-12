@@ -27,6 +27,18 @@ const AdminMealsPage = () => {
         );
     }
 
+    const handleToggleDaily = async (meal: Meal) => {
+      const updatedMeal = await updateMeal(meal._id, {
+        isDaily: !meal.isDaily,
+      });
+
+      setMeals((currentMeals) =>
+        currentMeals.map((currentMeal) =>
+          currentMeal._id === meal._id ? updatedMeal : currentMeal
+        )
+      );
+    };
+
     const handleEdit = (meal: Meal) => {
         setEditingMealId(meal._id);
         setEditName(meal.name);
@@ -269,6 +281,11 @@ const AdminMealsPage = () => {
                                 className="btn btn-delete"
                                 onClick={() => handleDelete(meal._id)}>
                                 Delete
+                              </button>
+                              <button
+                                className={`btn ${meal.isDaily ? "btn-daily-active" : "btn-daily"}`}
+                                onClick={() => handleToggleDaily(meal)}>
+                                {meal.isDaily ? "Daily menu" : "Add to daily"}
                               </button>
                               </>
                             )}

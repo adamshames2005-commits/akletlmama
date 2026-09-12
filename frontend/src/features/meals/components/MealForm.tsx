@@ -13,10 +13,9 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
     const [imageUrl, setImageUrl] = useState<string>("");
     const [smallPotPrice, setSmallPotPrice] = useState<string>("");
     const [largePotPrice, setLargePotPrice] = useState<string>("");
-    const [isDaily, setIsDaily] = useState<boolean>(false);
 
     const handleSubmit = async (
-        event: React.FormEvent<HTMLFormElement>
+        event: { preventDefault: () => void }
     ) => {
         event.preventDefault();
 
@@ -39,7 +38,6 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
 
                       }),
             },
-            isDaily,
         });
 
         onMealCreated(newMeal);
@@ -50,7 +48,6 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
         setSmallPotPrice("");
         setLargePotPrice("");
         setImageUrl("");
-        setIsDaily(false);
     };
 
     return (
@@ -84,16 +81,6 @@ const MealForm = ({ onMealCreated }: MealFormProps) => {
                     onChange={(e) => setImageUrl(e.target.value)}
                     placeholder="https://..."
                     />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="meal-daily">
-                        <input
-                        id="meal-daily"
-                        type="checkbox"
-                        checked={isDaily}
-                        onChange={(e) => setIsDaily(e.target.checked)}
-                        /> <span>Include in today's menu</span>
-                    </label>
                 </div>
                 <div className="form-group">
                     <label htmlFor="individual-price">Individual Price:</label>

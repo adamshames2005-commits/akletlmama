@@ -2,9 +2,10 @@ import "./AdminLayout.css";
 
 type AdminLayoutProps = {
   children: React.ReactNode;
+  onLogout?: () => void;
 };
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
   return (
     <div className="admin-layout">
 
@@ -41,9 +42,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="topbar-actions">
             <button className="icon-button">🔔</button>
 
-            <div className="admin-avatar">
+            <button className="admin-avatar" type="button" onClick={onLogout} title="Log out">
               MJ
-            </div>
+            </button>
 
             <span>Admin</span>
           </div>

@@ -1,32 +1,7 @@
+import { useEffect, useState } from "react";
+import { getMeals } from "../../meals/api/mealApi";
+import type { Meal } from "../../meals/types/meal.types";
 import "./HomePage.css";
-import { useState } from "react";
-
-const meals = [
-  {
-    name: "Mloukhieh",
-    description: "Traditional homemade mloukhieh served fresh.",
-    prices: { individual: 8, smallPot: 22, largePot: 38 },
-    isDaily: true,
-    image:
-      "https://images.unsplash.com/photo-1547592180-85f173990554",
-  },
-  {
-    name: "Kebbeh",
-    description: "Homemade kebbeh with authentic Lebanese flavor.",
-    prices: { individual: 9, smallPot: 25, largePot: 42 },
-    isDaily: true,
-    image:
-      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe",
-  },
-  {
-    name: "Fasoulia",
-    description: "Slow-cooked beans with rice and homemade spices.",
-    prices: { smallPot: 20, largePot: 35 },
-    isDaily: false,
-    image:
-      "https://images.unsplash.com/photo-1547592166-23ac45744acd",
-  },
-];
 
 type MealSize = "individual" | "smallPot" | "largePot";
 
@@ -36,7 +11,7 @@ const sizeLabels: Record<MealSize, string> = {
   largePot: "Large pot",
 };
 
-function HomeMealCard({ meal }: Readonly<{ meal: (typeof meals)[number] }>) {
+function HomeMealCard({ meal }: Readonly<{ meal: Meal }>) {
   const availableSizes = (Object.keys(meal.prices) as MealSize[]).filter(
     (size) => meal.prices[size] !== undefined
   );
@@ -45,7 +20,11 @@ function HomeMealCard({ meal }: Readonly<{ meal: (typeof meals)[number] }>) {
   return (
     <article className="meal-card">
       <div className="meal-card-image">
-        <img src={meal.image} alt={meal.name} />
+        {meal.imageUrl ? (
+          <img src={meal.imageUrl} alt={meal.name} />
+        ) : (
+          <div className="meal-card-placeholder">🍲</div>
+        )}
         <span className={meal.isDaily ? "meal-badge daily" : "meal-badge"}>
           {meal.isDaily ? "Today's menu" : "Available to order"}
         </span>
@@ -78,27 +57,40 @@ function HomeMealCard({ meal }: Readonly<{ meal: (typeof meals)[number] }>) {
 }
 
 export default function HomePage() {
+  const [meals, setMeals] = useState<Meal[]>([]);
   const [showDailyOnly, setShowDailyOnly] = useState(true);
-  const visibleMeals = showDailyOnly ? meals.filter((meal) => meal.isDaily) : meals;
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    const loadMeals = async () => {
+      try {
+        setMeals(await getMeals());
+      } catch {
+        setLoadError("We could not load the meals right now.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadMeals();
+  }, []);
+
+  const visibleMeals = showDailyOnly
+    ? meals.filter((meal) => meal.isDaily && meal.isActive)
+    : meals.filter((meal) => meal.isActive);
 
   return (
     <div className="home-page">
-
       <section className="hero-section">
         <div className="hero-content">
           <span className="hero-label">Homemade. Fresh. Simple.</span>
-
           <h1>
             A homemade lunch,
             <br />
             even when you're away from home.
           </h1>
-
-          <p>
-            Fresh meals prepared daily with the taste and comfort of
-            home cooking.
-          </p>
-
+          <p>Fresh meals prepared daily with the taste and comfort of home cooking.</p>
           <button className="hero-button" onClick={() => setShowDailyOnly(true)}>
             Explore Today's Menu
           </button>
@@ -111,7 +103,6 @@ export default function HomePage() {
             <span className="section-label">Fresh today</span>
             <h2>Today's Menu</h2>
           </div>
-
           <div className="menu-switcher">
             <button className={showDailyOnly ? "selected" : ""} type="button" onClick={() => setShowDailyOnly(true)}>
               Today's menu
@@ -122,45 +113,30 @@ export default function HomePage() {
           </div>
         </div>
 
+        {isLoading && <p className="meals-status">Loading meals...</p>}
+        {loadError && <p className="meals-status meals-error">{loadError}</p>}
+        {!isLoading && !loadError && visibleMeals.length === 0 && (
+          <p className="meals-status">No meals are available in this menu yet.</p>
+        )}
         <div className="meal-grid">
-          {visibleMeals.map((meal) => <HomeMealCard key={meal.name} meal={meal} />)}
+          {visibleMeals.map((meal) => <HomeMealCard key={meal._id} meal={meal} />)}
         </div>
       </section>
 
       <section className="why-section">
-        <div>
-          <span>🏠</span>
-          <h3>Homemade</h3>
-          <p>Meals that taste like home.</p>
-        </div>
-
-        <div>
-          <span>🍲</span>
-          <h3>Fresh Daily</h3>
-          <p>Prepared fresh every day.</p>
-        </div>
-
-        <div>
-          <span>🚚</span>
-          <h3>Delivered</h3>
-          <p>Lunch delivered to your door.</p>
-        </div>
+        <div><span>🏠</span><h3>Homemade</h3><p>Meals that taste like home.</p></div>
+        <div><span>🍲</span><h3>Fresh Daily</h3><p>Prepared fresh every day.</p></div>
+        <div><span>🚚</span><h3>Delivered</h3><p>Lunch delivered to your door.</p></div>
       </section>
 
       <section className="subscription-banner">
         <div>
           <span>Monthly plan</span>
-
           <h2>Your lunches, planned for the month.</h2>
-
-          <p>
-            Select 20 lunches ahead of time and make your month easier.
-          </p>
+          <p>Select 20 lunches ahead of time and make your month easier.</p>
         </div>
-
         <button>Explore Subscription</button>
       </section>
-
     </div>
   );
 }

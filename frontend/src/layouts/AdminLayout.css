@@ -161,11 +161,14 @@
 
   border-radius: 50%;
 
+  border: none;
+
   background: #315c42;
   color: white;
 
   font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 /* ========================

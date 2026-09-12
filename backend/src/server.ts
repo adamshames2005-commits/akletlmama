@@ -1,6 +1,7 @@
 import app from "./app.js";
 import "dotenv/config";
 import { connectDB } from "./config/database.js";
+import { ensureAdminAccount } from "./features/auth/auth.service.js";
 
 
 
@@ -9,6 +10,7 @@ const PORT = process.env.PORT;
 const startServer = async () => {
 try {
     await connectDB();
+    await ensureAdminAccount();
 
 app.listen(PORT, () => {
     console.log("server is running");

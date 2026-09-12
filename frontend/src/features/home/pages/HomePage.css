@@ -172,6 +172,25 @@
   color: #28613a;
 }
 
+.meal-card-placeholder {
+  width: 100%;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #edf2e8;
+  font-size: 50px;
+}
+
+.meals-status {
+  margin: 0 0 24px;
+  color: #68736b;
+}
+
+.meals-error {
+  color: #a43d35;
+}
+
 .meal-card:hover {
   transform: translateY(-4px);
 

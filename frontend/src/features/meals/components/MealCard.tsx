@@ -18,7 +18,7 @@ export default function MealCard({ meal }: MealCardProps) {
         {meal.imageUrl ? (
           <img src={meal.imageUrl} alt={meal.name} />
         ) : (
-          <div className="meal-card-placeholder">🍲</div>
+          <div className="meal-card-placeholder">no image</div>
         )}
       </div>
 
