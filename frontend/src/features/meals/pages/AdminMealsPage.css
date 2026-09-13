@@ -136,6 +136,27 @@
 .actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  min-width: 230px;
+}
+
+.actions .btn {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+.meal-description-cell {
+  width: 220px;
+  max-width: 220px;
+}
+
+.meal-description-cell span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 1.4;
+  max-height: 2.8em;
 }
 
 .meals-table {
@@ -204,6 +225,11 @@
   padding: 7px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+textarea.edit-input {
+  min-height: 58px;
+  resize: vertical;
 }
 
 @media (max-width: 800px) {

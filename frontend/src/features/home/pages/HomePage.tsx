@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getMeals } from "../../meals/api/mealApi";
 import type { Meal } from "../../meals/types/meal.types";
+import type { CustomerView, MenuFilter, OrderItem } from "../../../App";
+import heroImage from "../../../assets/hero.png";
 import "./HomePage.css";
 
 type MealSize = "individual" | "smallPot" | "largePot";
@@ -11,9 +13,24 @@ const sizeLabels: Record<MealSize, string> = {
   largePot: "Large pot",
 };
 
-function HomeMealCard({ meal }: Readonly<{ meal: Meal }>) {
+type HomePageProps = Readonly<{
+  menuFilter: MenuFilter;
+  onMenuFilterChange: (filter: MenuFilter) => void;
+  customerView: CustomerView;
+  onCustomerViewChange: (view: CustomerView) => void;
+  isAuthenticated: boolean;
+  onRequireLogin: () => void;
+  onAddToOrder: (item: Omit<OrderItem, "id">) => void;
+}>;
+
+function HomeMealCard({ meal, isAuthenticated, onRequireLogin, onAddToOrder }: Readonly<{
+  meal: Meal;
+  isAuthenticated: boolean;
+  onRequireLogin: () => void;
+  onAddToOrder: (item: Omit<OrderItem, "id">) => void;
+}>) {
   const availableSizes = (Object.keys(meal.prices) as MealSize[]).filter(
-    (size) => meal.prices[size] !== undefined
+    (size) => meal.prices[size] !== undefined && (meal.isDaily || size !== "individual")
   );
   const [selectedSize, setSelectedSize] = useState<MealSize>(availableSizes[0]);
 
@@ -49,16 +66,34 @@ function HomeMealCard({ meal }: Readonly<{ meal: Meal }>) {
         </div>
         <div className="meal-card-bottom">
           <span>{meal.isDaily ? "Individual from the daily menu" : "Choose a pot size"}</span>
-          <button type="button">Add to order</button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!isAuthenticated) {
+                onRequireLogin();
+                return;
+              }
+              onAddToOrder({ meal, size: selectedSize, price: meal.prices[selectedSize] ?? 0 });
+            }}
+          >
+            Add to cart
+          </button>
         </div>
       </div>
     </article>
   );
 }
 
-export default function HomePage() {
+export default function HomePage({
+  menuFilter,
+  onMenuFilterChange,
+  customerView,
+  onCustomerViewChange,
+  isAuthenticated,
+  onRequireLogin,
+  onAddToOrder,
+}: HomePageProps) {
   const [meals, setMeals] = useState<Meal[]>([]);
-  const [showDailyOnly, setShowDailyOnly] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
@@ -76,38 +111,68 @@ export default function HomePage() {
     void loadMeals();
   }, []);
 
-  const visibleMeals = showDailyOnly
+  const visibleMeals = menuFilter === "daily"
     ? meals.filter((meal) => meal.isDaily && meal.isActive)
     : meals.filter((meal) => meal.isActive);
 
+  if (customerView === "home") {
+    return (
+      <div className="home-page home-overview">
+        <section className="hero-section">
+          <div className="hero-content">
+            <span className="hero-label">AkletLmama / homemade food</span>
+            <h1>Good food, made to feel like home.</h1>
+            <p>AkletLmama brings fresh, comforting meals to your day. Choose a plate from today's kitchen or browse the full menu whenever you are ready.</p>
+            <div className="hero-actions">
+              <button className="hero-button" type="button" onClick={() => { onMenuFilterChange("daily"); onCustomerViewChange("menu"); }}>
+                See today's menu
+              </button>
+              <button className="hero-link" type="button" onClick={() => { onMenuFilterChange("all"); onCustomerViewChange("menu"); }}>
+                Browse all meals <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+          <div className="hero-visual">
+            <img src={heroImage} alt="AkletLmama meal delivery" />
+            <div className="hero-note"><strong>Freshly prepared</strong><span>Comfort food for busy days</span></div>
+          </div>
+        </section>
+
+        <section className="project-intro">
+          <div>
+            <span className="section-label">Why AkletLmama</span>
+            <h2>A simpler way to eat well.</h2>
+          </div>
+          <p>We make everyday meals easier with a focused menu, generous portions, and food prepared with the warmth of a home kitchen.</p>
+        </section>
+
+        <section className="info-grid" aria-label="AkletLmama benefits">
+          <article><span>01</span><h3>Made fresh</h3><p>Meals are prepared with care so lunch feels like something to look forward to.</p></article>
+          <article><span>02</span><h3>Easy to choose</h3><p>Start with today's menu or take your time exploring every available meal.</p></article>
+          <article><span>03</span><h3>Ready for your day</h3><p>Pick your serving size, add it to your order, and keep moving.</p></article>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="home-page">
-      <section className="hero-section">
-        <div className="hero-content">
-          <span className="hero-label">Homemade. Fresh. Simple.</span>
-          <h1>
-            A homemade lunch,
-            <br />
-            even when you're away from home.
-          </h1>
-          <p>Fresh meals prepared daily with the taste and comfort of home cooking.</p>
-          <button className="hero-button" onClick={() => setShowDailyOnly(true)}>
-            Explore Today's Menu
-          </button>
-        </div>
-      </section>
-
       <section className="home-section">
         <div className="section-heading">
           <div>
-            <span className="section-label">Fresh today</span>
-            <h2>Today's Menu</h2>
+            <span className="section-label">{menuFilter === "daily" ? "Fresh from today's kitchen" : "The full selection"}</span>
+            <h1>{menuFilter === "daily" ? "Today's Menu" : "All Meals"}</h1>
+            <p className="menu-description">
+              {menuFilter === "daily"
+                ? "A short, fresh selection prepared for today. Choose a meal and make lunch the easiest part of your day."
+                : "Explore every active meal in our kitchen, from individual plates to generous pot sizes for sharing."}
+            </p>
           </div>
           <div className="menu-switcher">
-            <button className={showDailyOnly ? "selected" : ""} type="button" onClick={() => setShowDailyOnly(true)}>
+            <button className={menuFilter === "daily" ? "selected" : ""} type="button" onClick={() => onMenuFilterChange("daily")}>
               Today's menu
             </button>
-            <button className={!showDailyOnly ? "selected" : ""} type="button" onClick={() => setShowDailyOnly(false)}>
+            <button className={menuFilter === "all" ? "selected" : ""} type="button" onClick={() => onMenuFilterChange("all")}>
               All meals
             </button>
           </div>
@@ -119,7 +184,15 @@ export default function HomePage() {
           <p className="meals-status">No meals are available in this menu yet.</p>
         )}
         <div className="meal-grid">
-          {visibleMeals.map((meal) => <HomeMealCard key={meal._id} meal={meal} />)}
+          {visibleMeals.map((meal) => (
+            <HomeMealCard
+              key={meal._id}
+              meal={meal}
+              isAuthenticated={isAuthenticated}
+              onRequireLogin={onRequireLogin}
+              onAddToOrder={onAddToOrder}
+            />
+          ))}
         </div>
       </section>
 

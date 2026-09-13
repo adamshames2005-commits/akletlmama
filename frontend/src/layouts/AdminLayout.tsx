@@ -1,11 +1,14 @@
 import "./AdminLayout.css";
+import type { AdminView } from "../App";
 
 type AdminLayoutProps = {
   children: React.ReactNode;
   onLogout?: () => void;
+  activeView: AdminView;
+  onViewChange: (view: AdminView) => void;
 };
 
-export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
+export default function AdminLayout({ children, onLogout, activeView, onViewChange }: AdminLayoutProps) {
   return (
     <div className="admin-layout">
 
@@ -18,14 +21,15 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
           </div>
 
           <nav className="admin-nav">
-            <button>⌂ <span>Dashboard</span></button>
+            <button className={activeView === "dashboard" ? "active" : ""} onClick={() => onViewChange("dashboard")}>⌂ <span>Dashboard</span></button>
 
-            <button className="active">
+            <button className={activeView === "meals" ? "active" : ""} onClick={() => onViewChange("meals")}>
               🍴 <span>Meals</span>
             </button>
 
             <button>▣ <span>Daily Menu</span></button>
-            <button>🛒 <span>Orders</span></button>
+            <button className={activeView === "orders" ? "active" : ""} onClick={() => onViewChange("orders")}>🛒 <span>Orders</span></button>
+            <button className={activeView === "users" ? "active" : ""} onClick={() => onViewChange("users")}>♙ <span>Users</span></button>
             <button>♙ <span>Subscriptions</span></button>
           </nav>
         </div>

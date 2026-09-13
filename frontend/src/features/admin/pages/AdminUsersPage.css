@@ -1,0 +1,5 @@
+.admin-data-table { width: 100%; border-collapse: collapse; }
+.admin-data-table th, .admin-data-table td { padding: 14px 12px; border-bottom: 1px solid #e8eae8; text-align: left; }
+.admin-data-table th { background: #f1f4f1; color: #354139; font-size: 13px; }
+.admin-data-table .btn { margin-right: 8px; }
+.admin-feedback { color: #b43d32; }

@@ -1,0 +1,4 @@
+.monthly-summary h2 { margin-top: 0; }
+.monthly-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 18px; padding: 12px 0; border-bottom: 1px solid #e8eae8; }
+.monthly-row b { color: #315c42; }
+@media (max-width: 800px) { .admin-data-table { min-width: 650px; } .admin-card { overflow-x: auto; } }

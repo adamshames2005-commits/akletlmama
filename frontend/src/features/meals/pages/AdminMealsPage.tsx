@@ -21,11 +21,16 @@ const AdminMealsPage = () => {
     const [editLargePotPrice, setEditLargePotPrice] = useState("");
 
     const handleDelete = async (id: string) => {
+      if (!window.confirm("Are you sure you want to delete this meal?")) {
+        return;
+      }
+
         await deleteMeal(id);
         setMeals((currentMeals) =>
             currentMeals.filter((meal) => meal._id !== id)
         );
     }
+
 
     const handleToggleDaily = async (meal: Meal) => {
       const updatedMeal = await updateMeal(meal._id, {
@@ -190,17 +195,18 @@ const AdminMealsPage = () => {
                             )}
                           </td>
                         
-                          <td>
+                          <td className="meal-description-cell">
                             {isEditing ? (
-                              <input
+                              <textarea
                                 className="edit-input"
+                                rows={2}
                                 value={editDescription}
                                 onChange={(event) =>
                                   setEditDescription(event.target.value)
                                 }
                               />
                             ) : (
-                              meal.description
+                              <span>{meal.description}</span>
                             )}
                           </td>
                         <td>
@@ -256,7 +262,7 @@ const AdminMealsPage = () => {
                         
                           <td>
                             {isEditing ? (
-                              <>
+                              <div className="actions">
                                 <button
                                   className="btn btn-save"
                                   onClick={() => handleSaveEdit(meal._id)}
@@ -269,9 +275,9 @@ const AdminMealsPage = () => {
                                 onClick={handleCancelEdit}>
                                   Cancel
                                 </button>
-                              </>
+                              </div>
                             ) : (
-                                <>
+                              <div className="actions">
                               <button
                                 className="btn btn-edit"
                                 onClick={() => handleEdit(meal)}>
@@ -287,7 +293,7 @@ const AdminMealsPage = () => {
                                 onClick={() => handleToggleDaily(meal)}>
                                 {meal.isDaily ? "Daily menu" : "Add to daily"}
                               </button>
-                              </>
+                              </div>
                             )}
                           </td>
                         </tr>

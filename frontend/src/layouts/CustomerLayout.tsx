@@ -1,15 +1,31 @@
 import { useState, type ReactNode } from "react";
 import { login, signUp, type AuthUser } from "../features/auth/authApi";
+import { createOrder } from "../features/orders/orderApi";
+import type { CustomerView, MenuFilter, OrderItem } from "../App";
 import "./CustomerLayout.css";
 
 type CustomerLayoutProps = Readonly<{
-  children: ReactNode;
+  children: (actions: { onRequireLogin: () => void }) => ReactNode;
   onAuthenticated?: (user: AuthUser) => void;
+  menuFilter: MenuFilter;
+  onMenuFilterChange: (filter: MenuFilter) => void;
+  customerView: CustomerView;
+  onCustomerViewChange: (view: CustomerView) => void;
+  orderItems: OrderItem[];
+  onRemoveFromCart: (id: string) => void;
+  onOrderPlaced: () => void;
 }>;
 
 export default function CustomerLayout({
   children,
   onAuthenticated,
+  menuFilter,
+  onMenuFilterChange,
+  customerView,
+  onCustomerViewChange,
+  orderItems,
+  onRemoveFromCart,
+  onOrderPlaced,
 }: CustomerLayoutProps) {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const savedUser = localStorage.getItem("akletlmama-user");
@@ -21,6 +37,12 @@ export default function CustomerLayout({
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [location, setLocation] = useState("");
+  const [alternatePhone, setAlternatePhone] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
+  const [isOrdering, setIsOrdering] = useState(false);
 
   const openAuth = (mode: "login" | "signup") => {
     setAuthMode(mode);
@@ -28,6 +50,10 @@ export default function CustomerLayout({
     setName("");
     setPhone("");
     setPassword("");
+  };
+
+  const requestLogin = () => {
+    if (!user) openAuth("login");
   };
 
   const handleAuth = async (event: { preventDefault: () => void }) => {
@@ -61,6 +87,25 @@ export default function CustomerLayout({
     setUser(null);
   };
 
+  const cartTotal = orderItems.reduce((total, item) => total + item.price, 0);
+  const handlePlaceOrder = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    setCheckoutError("");
+    setIsOrdering(true);
+    try {
+      await createOrder(orderItems, location, alternatePhone);
+      onOrderPlaced();
+      setIsCheckoutOpen(false);
+      setIsOrderOpen(false);
+      setLocation("");
+      setAlternatePhone("");
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Could not place order");
+    } finally {
+      setIsOrdering(false);
+    }
+  };
+
   let authSubmitLabel = "Log in";
   if (isSubmitting) authSubmitLabel = "Please wait...";
   else if (authMode === "signup") authSubmitLabel = "Create account";
@@ -81,19 +126,19 @@ export default function CustomerLayout({
           </div>
 
           <nav className="customer-side-nav">
-            <button className="active">
+            <button className={customerView === "home" ? "active" : ""} type="button" onClick={() => onCustomerViewChange("home")}>
               🏠 <span>Home</span>
             </button>
 
-            <button>
+            <button className={customerView === "menu" && menuFilter === "daily" ? "active" : ""} type="button" onClick={() => { onMenuFilterChange("daily"); onCustomerViewChange("menu"); }}>
               🍲 <span>Today's Menu</span>
             </button>
 
-            <button>
+            <button className={customerView === "menu" && menuFilter === "all" ? "active" : ""} type="button" onClick={() => { onMenuFilterChange("all"); onCustomerViewChange("menu"); }}>
               🍴 <span>All Meals</span>
             </button>
 
-            <button>
+            <button type="button">
               📅 <span>Subscription</span>
             </button>
           </nav>
@@ -119,7 +164,9 @@ export default function CustomerLayout({
           </div>
 
           <div className="customer-topbar-actions">
-            <button>🛒</button>
+            <button type="button" onClick={() => user ? setIsOrderOpen((isOpen) => !isOpen) : requestLogin()} aria-label={`Open cart, ${orderItems.length} items`}>
+              🛒{orderItems.length > 0 && <span className="order-count">{orderItems.length}</span>}
+            </button>
             {user ? (
               <button className="customer-avatar" type="button" onClick={logout} title="Log out">
                 {user.name.slice(0, 2).toUpperCase()}
@@ -135,8 +182,42 @@ export default function CustomerLayout({
         </header>
 
         <main className="customer-main">
-          {children}
+          {children({ onRequireLogin: requestLogin })}
         </main>
+
+        {isOrderOpen && user && (
+          <aside className="order-panel" aria-label="Your cart">
+            <div className="order-panel-header">
+              <h2>Your cart</h2>
+              <button type="button" onClick={() => setIsOrderOpen(false)} aria-label="Close order">×</button>
+            </div>
+            {orderItems.length === 0 ? <p>Your cart is empty.</p> : orderItems.map((item) => (
+              <div className="order-item" key={item.id}>
+                <span>{item.meal.name} <small>{item.size}</small></span>
+                <span><strong>${item.price}</strong><button type="button" onClick={() => onRemoveFromCart(item.id)} aria-label={`Remove ${item.meal.name}`}>Remove</button></span>
+              </div>
+            ))}
+            {orderItems.length > 0 && <div className="cart-total"><strong>Total</strong><strong>${cartTotal.toFixed(2)}</strong></div>}
+            {orderItems.length > 0 && <button className="auth-submit" type="button" onClick={() => setIsCheckoutOpen(true)}>Order now</button>}
+          </aside>
+        )}
+
+        {isCheckoutOpen && user && (
+          <div className="auth-backdrop">
+            <section className="auth-modal" aria-label="Complete your order">
+              <button className="auth-close" type="button" onClick={() => setIsCheckoutOpen(false)} aria-label="Close">×</button>
+              <span className="auth-eyebrow">Checkout</span>
+              <h2>Where should we deliver?</h2>
+              <p>Ordering as {user.name}. Total: ${cartTotal.toFixed(2)}</p>
+              <form onSubmit={handlePlaceOrder}>
+                <label><span>Location</span><input value={location} onChange={(event) => setLocation(event.target.value)} required minLength={3} placeholder="Street, building, area" /></label>
+                <label><span>Another phone number (optional)</span><input value={alternatePhone} onChange={(event) => setAlternatePhone(event.target.value)} inputMode="tel" placeholder={user.phone} /></label>
+                {checkoutError && <p className="auth-error" role="alert">{checkoutError}</p>}
+                <button className="auth-submit" type="submit" disabled={isOrdering}>{isOrdering ? "Placing order..." : `Place order · $${cartTotal.toFixed(2)}`}</button>
+              </form>
+            </section>
+          </div>
+        )}
 
         {authMode && (
           <div className="auth-backdrop">
