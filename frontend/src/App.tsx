@@ -7,6 +7,7 @@ import HomePage from "./features/home/pages/HomePage";
 import type { Meal } from "./features/meals/types/meal.types";
 import AdminUsersPage from "./features/admin/pages/AdminUsersPage";
 import AdminOrdersPage from "./features/admin/pages/AdminOrdersPage";
+import AdminDashboardPage from "./features/admin/pages/AdminDashboardPage";
 
 export type MenuFilter = "daily" | "all";
 export type CustomerView = "home" | "menu";
@@ -72,6 +73,7 @@ function App() {
   if (user?.role === "admin") {
     return (
       <AdminLayout onLogout={handleLogout} activeView={adminView} onViewChange={setAdminView}>
+        {adminView === "dashboard" && <AdminDashboardPage />}
         {adminView === "meals" && <AdminMealsPage />}
         {adminView === "users" && <AdminUsersPage />}
         {adminView === "orders" && <AdminOrdersPage />}
