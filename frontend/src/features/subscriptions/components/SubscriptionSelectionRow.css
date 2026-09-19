@@ -1,0 +1,6 @@
+.subscription-selection-row { display: grid; grid-template-columns: 1fr 1.4fr 1.2fr auto auto; gap: 12px; align-items: end; padding: 14px 0; border-bottom: 1px solid #e7e1d7; }
+.subscription-selection-row label { display: grid; gap: 6px; color: #6e685f; font-size: 0.78rem; }
+.subscription-selection-row input, .subscription-selection-row select { min-height: 40px; border: 1px solid #d8d0c4; border-radius: 4px; padding: 0 10px; background: #fffdf9; color: #2f3a2f; }
+.subscription-row-price { min-width: 58px; padding-bottom: 11px; color: #2f3a2f; }
+.subscription-remove { min-height: 38px; border: 0; background: transparent; color: #9b4b3d; cursor: pointer; }
+@media (max-width: 760px) { .subscription-selection-row { grid-template-columns: 1fr 1fr; } .subscription-row-price { padding-bottom: 0; } }

@@ -1,4 +1,4 @@
-import type { OrderItem } from "../../App";
+import type { OrderItem } from "../../../App";
 
 const API_URL = "http://localhost:3000/api/orders";
 

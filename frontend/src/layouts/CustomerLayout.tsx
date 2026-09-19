@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { login, signUp, type AuthUser } from "../features/auth/authApi";
-import { createOrder } from "../features/orders/orderApi";
+import { login, signUp, type AuthUser } from "../features/auth/api/authApi";
+import { createOrder } from "../features/orders/api/orderApi";
 import type { CustomerView, MenuFilter, OrderItem } from "../App";
 import "./CustomerLayout.css";
 
@@ -138,7 +138,7 @@ export default function CustomerLayout({
               🍴 <span>All Meals</span>
             </button>
 
-            <button type="button">
+            <button className={customerView === "subscription" ? "active" : ""} type="button" onClick={() => user ? onCustomerViewChange("subscription") : requestLogin()}>
               📅 <span>Subscription</span>
             </button>
           </nav>

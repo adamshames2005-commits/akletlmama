@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMonthlyTotals, getOrders, type AdminOrder, type MonthlyTotal } from "../../orders/orderApi";
+import { getMonthlyTotals, getOrders, type AdminOrder, type MonthlyTotal } from "../../orders/api/orderApi";
 import "./AdminOrdersPage.css";
 
 export default function AdminOrdersPage() {

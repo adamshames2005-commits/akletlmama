@@ -30,7 +30,7 @@ export default function AdminLayout({ children, onLogout, activeView, onViewChan
             <button>▣ <span>Daily Menu</span></button>
             <button className={activeView === "orders" ? "active" : ""} onClick={() => onViewChange("orders")}>🛒 <span>Orders</span></button>
             <button className={activeView === "users" ? "active" : ""} onClick={() => onViewChange("users")}>♙ <span>Users</span></button>
-            <button>♙ <span>Subscriptions</span></button>
+            <button className={activeView === "subscriptions" ? "active" : ""} onClick={() => onViewChange("subscriptions")}>♙ <span>Subscriptions</span></button>
           </nav>
         </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { deleteUser, getUsers, updateUser, type AdminUser } from "../../auth/userApi";
+import { deleteUser, getUsers, updateUser, type AdminUser } from "../../auth/api/userApi";
 import "./AdminUsersPage.css";
 
 export default function AdminUsersPage() {

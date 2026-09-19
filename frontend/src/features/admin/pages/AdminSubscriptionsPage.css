@@ -1,0 +1,12 @@
+.subscription-discount-card { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 16px; }
+.subscription-discount-card h2 { margin: 0 0 8px; }
+.subscription-discount-card p { margin: 0; color: #756f66; }
+.subscription-discount-card form { display: flex; gap: 8px; align-items: end; }
+.subscription-discount-card label { display: grid; gap: 6px; color: #756f66; font-size: 0.8rem; }
+.subscription-discount-card input { width: 90px; min-height: 38px; border: 1px solid #d8d0c4; padding: 0 8px; }
+.subscription-discount-card form > span { padding-bottom: 10px; }
+.subscription-admin-table-wrap { overflow-x: auto; }
+.subscription-admin-table-wrap details { min-width: 180px; }
+.subscription-admin-table-wrap ul { padding-left: 18px; margin: 8px 0; min-width: 260px; }
+.subscription-admin-table-wrap li { margin-bottom: 4px; font-size: 0.82rem; }
+@media (max-width: 760px) { .subscription-discount-card { align-items: stretch; flex-direction: column; } .subscription-discount-card form { align-items: end; } }

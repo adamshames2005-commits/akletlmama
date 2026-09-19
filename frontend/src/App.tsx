@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { AuthUser } from "./features/auth/authApi";
+import type { AuthUser } from "./features/auth/api/authApi";
 import CustomerLayout from "./layouts/CustomerLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminMealsPage from "./features/meals/pages/AdminMealsPage";
@@ -8,10 +8,12 @@ import type { Meal } from "./features/meals/types/meal.types";
 import AdminUsersPage from "./features/admin/pages/AdminUsersPage";
 import AdminOrdersPage from "./features/admin/pages/AdminOrdersPage";
 import AdminDashboardPage from "./features/admin/pages/AdminDashboardPage";
+import AdminSubscriptionsPage from "./features/admin/pages/AdminSubscriptionsPage";
+import MonthlySubscriptionPage from "./features/subscriptions/pages/MonthlySubscriptionPage";
 
 export type MenuFilter = "daily" | "all";
-export type CustomerView = "home" | "menu";
-export type AdminView = "dashboard" | "meals" | "users" | "orders";
+export type CustomerView = "home" | "menu" | "subscription";
+export type AdminView = "dashboard" | "meals" | "users" | "orders" | "subscriptions";
 
 export type OrderItem = {
   id: string;
@@ -77,6 +79,7 @@ function App() {
         {adminView === "meals" && <AdminMealsPage />}
         {adminView === "users" && <AdminUsersPage />}
         {adminView === "orders" && <AdminOrdersPage />}
+        {adminView === "subscriptions" && <AdminSubscriptionsPage />}
       </AdminLayout>
     );
   }
@@ -93,15 +96,17 @@ function App() {
       onOrderPlaced={clearCart}
     >
       {({ onRequireLogin }) => (
-        <HomePage
-          menuFilter={menuFilter}
-          onMenuFilterChange={setMenuFilter}
-          customerView={customerView}
-          onCustomerViewChange={setCustomerView}
-          isAuthenticated={Boolean(user)}
-          onRequireLogin={onRequireLogin}
-          onAddToOrder={addToOrder}
-        />
+        customerView === "subscription"
+          ? <MonthlySubscriptionPage />
+          : <HomePage
+              menuFilter={menuFilter}
+              onMenuFilterChange={setMenuFilter}
+              customerView={customerView}
+              onCustomerViewChange={setCustomerView}
+              isAuthenticated={Boolean(user)}
+              onRequireLogin={onRequireLogin}
+              onAddToOrder={addToOrder}
+            />
       )}
     </CustomerLayout>
   );
